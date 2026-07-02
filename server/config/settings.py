@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'account'
+    'account',
+    'goals',
+    'conversations',
 ]
 
 # Use custom user model from the `account` app
