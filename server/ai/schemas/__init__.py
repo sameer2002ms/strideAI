@@ -2,6 +2,7 @@ from .context import (
     AgentContext,
     ConversationContext,
     ConversationMessage,
+    GoalContext,
     MemoryContext,
 )
 
@@ -21,4 +22,5 @@ __all__ = [
     "Prompt",
     "PromptMessage",
     "ReasoningResponse",
+    "GoalContext",
 ]

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'goals',
     'conversations',
     'memory',
+    'checkins',
 ]
 
 # Use custom user model from the `account` app

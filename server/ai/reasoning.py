@@ -1,6 +1,10 @@
-from ai.providers.factory import ProviderFactory
+from typing import Type
+
+from pydantic import BaseModel
+
 from ai.prompts import Prompt
-from ai.schemas import ReasoningResponse
+from ai.providers.factory import ProviderFactory
+
 
 class ReasoningService:
     """
@@ -15,11 +19,14 @@ class ReasoningService:
 
     def generate(
         self,
+        *,
         prompt: Prompt,
-    ) -> ReasoningResponse:
+        response_model: Type[BaseModel],
+    ) -> BaseModel:
         """
-        Generate a response using the configured AI provider.
+        Generate a structured response using the configured AI provider.
         """
         return self.provider.generate(
             prompt=prompt,
+            response_model=response_model,
         )

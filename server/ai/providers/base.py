@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
+from typing import Type
+
+from pydantic import BaseModel
 
 from ai.prompts import Prompt
-from ai.schemas import ReasoningResponse
+
 
 class BaseAIProvider(ABC):
     """
@@ -15,16 +18,18 @@ class BaseAIProvider(ABC):
     @abstractmethod
     def generate(
         self,
+        *,
         prompt: Prompt,
-    ) -> ReasoningResponse:
+        response_model: Type[BaseModel],
+    ) -> BaseModel:
         """
-        Generate a structured reasoning response
-        from a provider-independent prompt.
+        Generate a structured response from the AI model.
 
         Args:
             prompt: Provider-independent prompt.
+            response_model: Pydantic model describing the expected output.
 
         Returns:
-            Structured reasoning response.
+            An instance of the requested Pydantic model.
         """
         raise NotImplementedError

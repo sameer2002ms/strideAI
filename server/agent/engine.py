@@ -35,4 +35,6 @@ class AgentEngine:
 
         return self.reasoning.generate(
             prompt=prompt,
+            response_model=ReasoningResponse,
+
         )

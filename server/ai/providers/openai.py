@@ -1,8 +1,11 @@
+from typing import Type
+
 from django.conf import settings
 from openai import OpenAI
+from pydantic import BaseModel
 
 from ai.prompts import Prompt
-from ai.schemas import ReasoningResponse
+
 from .base import BaseAIProvider
 
 
@@ -18,9 +21,11 @@ class OpenAIProvider(BaseAIProvider):
 
     def generate(
         self,
+        *,
         prompt: Prompt,
-    ) -> ReasoningResponse:
-        response = self.client.responses.create(
+        response_model: Type[BaseModel],
+    ) -> BaseModel:
+        response = self.client.responses.parse(
             model=settings.OPENAI_MODEL,
             input=[
                 {
@@ -29,8 +34,7 @@ class OpenAIProvider(BaseAIProvider):
                 }
                 for message in prompt.messages
             ],
+            text_format=response_model,
         )
 
-        return ReasoningResponse(
-            text=response.output_text,
-        )
+        return response.output_parsed

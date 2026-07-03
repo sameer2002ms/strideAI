@@ -6,8 +6,10 @@ from .schemas import (
     ConversationContext,
     ConversationMessage,
     MemoryContext,
+    GoalContext
 )
-
+from goals.models import Goal
+from goals.selectors import get_user_goals
 
 class ContextBuilder:
     """
@@ -32,6 +34,11 @@ class ContextBuilder:
         memory = MemorySelector.memory_dict(
             user=conversation.user,
         )
+        
+        goals = get_user_goals(
+            conversation.user,
+            status=Goal.Status.ACTIVE,
+        )
 
         return AgentContext(
             memory=MemoryContext(
@@ -46,4 +53,13 @@ class ContextBuilder:
                     for message in messages
                 ]
             ),
+            goals=[
+                GoalContext(
+                    title=goal.title,
+                    description=goal.description,
+                    frequency=goal.schedule.frequency,
+                    status=goal.status,
+                )
+                for goal in goals
+            ],
         )
