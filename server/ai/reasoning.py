@@ -1,6 +1,6 @@
 from ai.providers.factory import ProviderFactory
-from ai.schema import ReasoningResponse
-
+from ai.prompts import Prompt
+from ai.schemas import ReasoningResponse
 
 class ReasoningService:
     """
@@ -15,13 +15,11 @@ class ReasoningService:
 
     def generate(
         self,
-        prompt: str,
-        system_prompt: str | None = None,
+        prompt: Prompt,
     ) -> ReasoningResponse:
         """
         Generate a response using the configured AI provider.
         """
         return self.provider.generate(
             prompt=prompt,
-            system_prompt=system_prompt,
         )

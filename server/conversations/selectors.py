@@ -42,3 +42,21 @@ def get_conversation_messages(conversation):
         .filter(conversation=conversation)
         .order_by("created_at")
     )
+    
+    
+def get_recent_conversation_messages(
+    conversation,
+    *,
+    limit: int = 20,
+):
+    """
+    Return the most recent conversation messages in chronological order.
+    """
+
+    messages = list(
+        Message.objects
+        .filter(conversation=conversation)
+        .order_by("-created_at")[:limit]
+    )
+
+    return list(reversed(messages))

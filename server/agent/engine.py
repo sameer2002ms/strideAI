@@ -1,14 +1,16 @@
+from ai import ContextBuilder
+from ai.prompts.builder import PromptBuilder
 from ai.reasoning import ReasoningService
-from ai.schema import ReasoningResponse
+from ai.schemas import ReasoningResponse
 
 
 class AgentEngine:
     """
     Core orchestration engine for AI interactions.
 
-    The Agent Engine coordinates conversations and delegates
-    reasoning to the AI layer. It intentionally contains no
-    provider-specific logic.
+    The Agent Engine builds business context, constructs a
+    provider-independent prompt, and delegates reasoning
+    to the configured AI provider.
     """
 
     def __init__(self) -> None:
@@ -16,14 +18,21 @@ class AgentEngine:
 
     def process_message(
         self,
-        message: str,
-        system_prompt: str | None = None,
+        *,
+        conversation,
     ) -> ReasoningResponse:
         """
-        Process a user message and return the AI response.
+        Process a conversation and return the AI response.
         """
 
+        context = ContextBuilder.build(
+            conversation=conversation,
+        )
+
+        prompt = PromptBuilder.build(
+            context=context,
+        )
+
         return self.reasoning.generate(
-            prompt=message,
-            system_prompt=system_prompt,
+            prompt=prompt,
         )

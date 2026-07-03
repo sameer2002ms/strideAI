@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from ai.schema import ReasoningResponse
-
+from ai.prompts import Prompt
+from ai.schemas import ReasoningResponse
 
 class BaseAIProvider(ABC):
     """
@@ -15,17 +15,16 @@ class BaseAIProvider(ABC):
     @abstractmethod
     def generate(
         self,
-        prompt: str,
-        system_prompt: str | None = None,
+        prompt: Prompt,
     ) -> ReasoningResponse:
         """
-        Generate a text response from the AI model.
+        Generate a structured reasoning response
+        from a provider-independent prompt.
 
         Args:
-            prompt: The user prompt.
-            system_prompt: Optional system instruction.
+            prompt: Provider-independent prompt.
 
         Returns:
-            Generated response as plain text.
+            Structured reasoning response.
         """
         raise NotImplementedError

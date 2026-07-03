@@ -1,8 +1,8 @@
-from openai import OpenAI
 from django.conf import settings
+from openai import OpenAI
 
-from ai.schema import ReasoningResponse
-
+from ai.prompts import Prompt
+from ai.schemas import ReasoningResponse
 from .base import BaseAIProvider
 
 
@@ -18,15 +18,17 @@ class OpenAIProvider(BaseAIProvider):
 
     def generate(
         self,
-        prompt: str,
-        system_prompt: str | None = None,
+        prompt: Prompt,
     ) -> ReasoningResponse:
-        instructions = system_prompt or ""
-
         response = self.client.responses.create(
             model=settings.OPENAI_MODEL,
-            instructions=instructions,
-            input=prompt,
+            input=[
+                {
+                    "role": message.role,
+                    "content": message.content,
+                }
+                for message in prompt.messages
+            ],
         )
 
         return ReasoningResponse(
