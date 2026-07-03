@@ -1,6 +1,6 @@
 from conversations.selectors import get_recent_conversation_messages
-from memory.selectors import get_memory_dict
 
+from memory.selectors import MemorySelector
 from .schemas import (
     AgentContext,
     ConversationContext,
@@ -29,7 +29,7 @@ class ContextBuilder:
             limit=20,
         )
 
-        memory = get_memory_dict(
+        memory = MemorySelector.memory_dict(
             user=conversation.user,
         )
 

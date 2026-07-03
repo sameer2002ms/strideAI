@@ -11,11 +11,13 @@ from .selectors import (
 from .serializers import (
     ConversationSerializer,
     MessageSerializer,
+    SendMessageSerializer,
 )
 from .services import (
     abandon_conversation,
     delete_conversation,
     end_conversation,
+    send_message,
 )
 
 
@@ -76,7 +78,7 @@ class ConversationMessagesAPIView(generics.ListCreateAPIView):
     POST -> Add a new message
     """
 
-    serializer_class = MessageSerializer
+    serializer_class = SendMessageSerializer
     permission_classes = [
         permissions.IsAuthenticated,
         IsConversationOwner,
@@ -104,8 +106,31 @@ class ConversationMessagesAPIView(generics.ListCreateAPIView):
         context["conversation"] = self.get_conversation()
         return context
 
-    def perform_create(self, serializer):
-        serializer.save()
+    def create(self, request, *args, **kwargs):
+        conversation = self.get_conversation()
+
+        serializer = self.get_serializer(
+            data=request.data,
+        )
+
+        serializer.is_valid(
+            raise_exception=True,
+        )
+
+        user_message, assistant_message = send_message(
+            conversation=conversation,
+            content=serializer.validated_data["content"],
+        )
+
+        return Response(
+            {
+                "user_message": MessageSerializer(user_message).data,
+                "assistant_message": MessageSerializer(
+                    assistant_message
+                ).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class EndConversationAPIView(APIView):

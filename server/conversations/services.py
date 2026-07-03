@@ -9,6 +9,8 @@ from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from .models import Conversation, Message
+from agent.engine import AgentEngine
+
 
 
 @transaction.atomic
@@ -115,3 +117,42 @@ def delete_conversation(conversation: Conversation) -> None:
     """
 
     conversation.delete()
+    
+    
+
+@transaction.atomic
+def send_message(
+    conversation: Conversation,
+    *,
+    content: str,
+) -> tuple[Message, Message]:
+    """
+    Send a user message and generate the AI response.
+
+    This is the main entry point for every channel
+    (Web, Telegram, Voice, WhatsApp).
+    """
+
+    # Save user message
+    user_message = add_message(
+        conversation,
+        sender=Message.Sender.USER,
+        content=content,
+    )
+
+    # Generate AI response
+    engine = AgentEngine()
+
+    response = engine.process_message(
+        conversation=conversation,
+    )
+    print("🔥 RAW AI RESPONSE:", response)
+
+    # Save assistant message
+    assistant_message = add_message(
+        conversation,
+        sender=Message.Sender.ASSISTANT,
+        content=(response.text if response and response.text else "EMPTY_RESPONSE"),
+    )
+
+    return user_message, assistant_message    

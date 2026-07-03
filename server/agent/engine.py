@@ -1,4 +1,4 @@
-from ai import ContextBuilder
+from ai.builder import ContextBuilder
 from ai.prompts.builder import PromptBuilder
 from ai.reasoning import ReasoningService
 from ai.schemas import ReasoningResponse

@@ -31,13 +31,6 @@ class MessageSerializer(serializers.ModelSerializer):
             )
         return value
 
-    def create(self, validated_data):
-        conversation = self.context["conversation"]
-
-        return add_message(
-            conversation,
-            **validated_data,
-        )
 
 
 class ConversationSerializer(serializers.ModelSerializer):
@@ -84,3 +77,10 @@ class ConversationSerializer(serializers.ModelSerializer):
             user=user,
             **validated_data,
         )
+        
+        
+class SendMessageSerializer(serializers.Serializer):
+    content = serializers.CharField(
+        max_length=5000,
+        trim_whitespace=True,
+    )
