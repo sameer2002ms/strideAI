@@ -10,6 +10,19 @@ class Conversation(models.Model):
     Telegram, the web application, WhatsApp, or a future voice call,
     they are all represented by the same model.
     """
+    
+    class Purpose(models.TextChoices):  
+        ACCOUNTABILITY = "accountability", "Accountability"
+        STUDY = "study", "Study"
+        FITNESS = "fitness", "Fitness"
+        CAREER = "career", "Career"
+        SYSTEM = "system", "System"
+
+    purpose = models.CharField(
+        max_length=30,
+        choices=Purpose.choices,
+        default=Purpose.ACCOUNTABILITY,
+    )        
 
     class Channel(models.TextChoices):
         WEB = "web", "Web"
@@ -134,15 +147,3 @@ class Message(models.Model):
         )
         
         
-class Purpose(models.TextChoices):
-    ACCOUNTABILITY = "accountability", "Accountability"
-    STUDY = "study", "Study"
-    FITNESS = "fitness", "Fitness"
-    CAREER = "career", "Career"
-    SYSTEM = "system", "System"
-
-purpose = models.CharField(
-    max_length=30,
-    choices=Purpose.choices,
-    default=Purpose.ACCOUNTABILITY,
-)        

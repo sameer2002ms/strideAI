@@ -131,6 +131,19 @@ REDIS_URL = os.getenv(
     "redis://redis:6379/0",
 )
     
+import os
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_MODEL = os.getenv(
+    "OPENAI_MODEL",
+    "gpt-4.1-mini",
+)
+
+AI_PROVIDER = os.getenv(
+    "AI_PROVIDER",
+    default="openai",
+)   
+    
 # import os
  
 # SUPABASE_URL = os.environ["SUPABASE_URL"]
