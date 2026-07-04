@@ -12,7 +12,7 @@ from .models import CheckIn
 def create_checkin(
     *,
     goal,
-    date_: date,
+    date: date,
 ) -> CheckIn:
     """
     Create a daily check-in for a goal.
@@ -22,7 +22,7 @@ def create_checkin(
 
     checkin, _ = CheckIn.objects.get_or_create(
         goal=goal,
-        date=date_,
+        date=date,
     )
 
     return checkin
