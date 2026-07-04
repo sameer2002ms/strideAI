@@ -12,10 +12,16 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = BASE_DIR.parent
 
+# Load environment variables from the project-root .env file
+env_file = PROJECT_ROOT / ".env"
+if env_file.exists():
+    load_dotenv(dotenv_path=env_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -38,10 +44,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'account'
+    'account',
+    'goals',
+    'conversations',
+    'memory',
+    'checkins',
 ]
+
+# Use custom user model from the `account` app
+AUTH_USER_MODEL = 'account.User'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # near the top
@@ -52,6 +66,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middleware.rate_limit.RateLimitMiddleware',
+
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -79,9 +95,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 import dj_database_url
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is not set. Make sure the .env file exists at the project root and contains DATABASE_URL=...")
+
 DATABASES = {
     "default": dj_database_url.parse(
-        os.environ["DATABASE_URL"],
+        DATABASE_URL,
         conn_max_age=600,
         ssl_require=True,
     )
@@ -112,6 +132,19 @@ REDIS_URL = os.getenv(
     "REDIS_URL",
     "redis://redis:6379/0",
 )
+    
+import os
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_MODEL = os.getenv(
+    "OPENAI_MODEL",
+    "gpt-4.1-mini",
+)
+
+AI_PROVIDER = os.getenv(
+    "AI_PROVIDER",
+    default="openai",
+)   
     
 # import os
  

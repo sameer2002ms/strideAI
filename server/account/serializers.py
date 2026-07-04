@@ -1,7 +1,11 @@
+import zoneinfo
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from .models import Profile, UserPreferences
 
 User = get_user_model()
 
@@ -64,3 +68,38 @@ class LogoutSerializer(serializers.Serializer):
     def save(self):
         token = RefreshToken(self.validated_data["refresh"])
         token.blacklist()
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = (
+            "bio",
+            "avatar_url",
+            "phone_number",
+            "date_of_birth",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = ("created_at", "updated_at")
+
+
+class UserPreferencesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPreferences
+        fields = (
+            "timezone",
+            "language",
+            "theme",
+            "extra_settings",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = ("created_at", "updated_at")
+
+    def validate_timezone(self, value):
+        if value not in zoneinfo.available_timezones():
+            raise serializers.ValidationError(
+                "Unknown IANA timezone identifier (e.g. 'Asia/Kolkata', 'UTC')."
+            )
+        return value
