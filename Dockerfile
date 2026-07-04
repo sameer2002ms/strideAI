@@ -1,25 +1,25 @@
 # =========================
-# Base Image
+# Stage 1: Base
 # =========================
-FROM python:3.13-slim
+FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+# System deps (only what we really need)
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy dependency files first (better Docker cache)
-COPY pyproject.toml uv.lock ./
+# Install Python deps directly (uses prebuilt wheels)
+COPY requirements.txt .
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-# Install dependencies
-RUN uv sync --frozen --no-dev
-
-# Copy project
-COPY . .
+# Copy Django project
+COPY server/ /app/
 
 EXPOSE 8000
-
-CMD ["uv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
