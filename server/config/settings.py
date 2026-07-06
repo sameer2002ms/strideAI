@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+import ssl
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,7 +33,8 @@ SECRET_KEY = 'django-insecure-g7rvx0s-63zn#p3-cf76e(xt*q$uqjwy$c9t+d+3n6j^@vz8z^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".vercel.app"]
+ALLOWED_HOSTS = [".vercel.app",  "127.0.0.1",
+    "localhost",]
 
 CSRF_TRUSTED_ORIGINS = ["https://*.vercel.app"]
 
@@ -48,11 +50,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'django_celery_beat',
     'account',
     'goals',
     'conversations',
     'memory',
     'checkins',
+    'automation',
+    'channels',
 ]
 
 # Use custom user model from the `account` app
@@ -143,14 +148,22 @@ OPENAI_MODEL = os.getenv(
 )
 
 AI_PROVIDER = os.getenv(
-    "AI_PROVIDER",
+    "AI_PROIDER",
     default="openai",
 )   
-    
-# import os
- 
-# SUPABASE_URL = os.environ["SUPABASE_URL"]
-# SUPABASE_SERVICE_ROLE_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
+
+
+
+CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+
+CELERY_TIMEZONE = "Asia/Kolkata"
+
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 
 # Password validation

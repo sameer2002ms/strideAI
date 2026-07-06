@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError
 from .models import Conversation, Message
 from agent.engine import AgentEngine
 
-
+from .selectors import get_active_conversation
 
 @transaction.atomic
 def create_conversation(
@@ -117,7 +117,22 @@ def delete_conversation(conversation: Conversation) -> None:
     """
 
     conversation.delete()
-    
+
+
+
+def get_or_create_active_conversation(*, user, channel):
+    conversation = get_active_conversation(
+        user=user,
+        channel=channel,
+    )
+
+    if conversation:
+        return conversation
+
+    return create_conversation(
+        user=user,
+        channel=channel,
+    )    
     
 
 @transaction.atomic
@@ -145,6 +160,7 @@ def send_message(
 
     response = engine.process_message(
         conversation=conversation,
+        message=content,
     )
     print("🔥 RAW AI RESPONSE:", response)
 

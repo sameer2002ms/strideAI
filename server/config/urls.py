@@ -23,4 +23,5 @@ urlpatterns = [
     path('api/v1/goals/', include('goals.urls')),  # Include the URLs from the goals app
     path("api/v1/checkins/", include("checkins.urls")),
     path("api/v1/conversations/", include("conversations.urls")),
+    path("api/v1/channels/", include("channels.urls")),
 ]

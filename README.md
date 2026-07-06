@@ -314,3 +314,45 @@ Right now send_message() creates an AgentEngine instance directly:
 engine = AgentEngine()
 
 This is acceptable for now, but later we can inject dependencies if needed. I would not change it today. It isn't causing any problems, and it doesn't block features.
+
+
+
+
+PHASE 6 — CELERY FOUNDATION (NEXT STEP)
+
+We will build:
+
+Step 1
+Celery setup
+Redis connection
+Django integration
+Step 2
+periodic tasks
+🧭 PHASE 7 — DAILY CHECK-IN ENGINE
+
+Automate:
+
+create today's check-ins
+for all active goals
+🧭 PHASE 8 — TELEGRAM BOT
+
+Then:
+
+user receives message daily
+bot triggers AI engine
+🧭 PHASE 9 — PROACTIVE AI
+
+AI starts:
+
+asking questions
+pushing user
+reacting without prompt
+🧠 BIG REALIZATION
+
+Right now your system is:
+
+Chatbot + database
+
+After Celery:
+
+Behavior system that runs itself
