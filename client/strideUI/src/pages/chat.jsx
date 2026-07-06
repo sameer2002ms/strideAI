@@ -70,7 +70,10 @@ export default function Chat() {
 
       // backend may return different shapes; prefer assistant_message.content
       const aiContent =
-        res?.assistant_message?.content || res?.reply || res?.message || res?.content;
+        res?.assistant_message?.content ||
+        res?.reply ||
+        res?.message ||
+        res?.content;
 
       const aiMessage = {
         role: "assistant",
