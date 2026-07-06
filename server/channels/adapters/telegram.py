@@ -18,13 +18,15 @@ class TelegramAdapter(BaseChannelAdapter):
 
         url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage"
 
-        response = requests.post(
-            url,
-            json={
-                "chat_id": message.chat_id,
-                "text": message.text,
-            },
-            timeout=10,
-        )
+        payload = {
+            "chat_id": message.chat_id,
+            "text": message.text,
+        }
+
+        print("Telegram payload:", payload)
+
+        response = requests.post(url, json=payload, timeout=10)
+
+        print("Telegram response:", response.text)
 
         response.raise_for_status()

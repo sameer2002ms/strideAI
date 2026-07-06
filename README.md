@@ -356,3 +356,56 @@ Chatbot + database
 After Celery:
 
 Behavior system that runs itself
+
+
+
+🔴 MUST HAVE (before real users)
+1. Telegram production hardening
+
+Right now you need:
+
+Webhook verification (secret token check)
+Retry handling for failed Telegram sends
+Logging for every incoming message
+Error fallback responses
+2. AI context quality upgrade (VERY IMPORTANT)
+
+Currently AI works, but it is still basic.
+
+You need:
+
+Add into context:
+recent messages (you have this partially)
+user goals
+check-in status
+daily schedule
+memory facts (long-term)
+
+👉 Without this, AI = chat bot
+👉 With this, AI = accountability agent
+
+3. Idempotency (critical for Telegram)
+
+Telegram can resend webhooks.
+
+You need:
+
+message_id tracking
+prevent duplicate processing
+4. Conversation lifecycle rules
+
+Right now conversations are:
+
+always active forever
+
+You need rules like:
+
+inactivity timeout (e.g. 24h → new conversation)
+daily reset option (for check-ins)
+5. Failure handling (Celery + AI)
+
+You need:
+
+retry AI call if OpenAI fails
+fallback response ("I couldn’t process this")
+dead letter logging

@@ -71,11 +71,14 @@ class ChannelService:
 
         adapter = TelegramAdapter()
 
+        print("DEBUG chat_id:", chat_id)
+        print("DEBUG text:", text)
+
         adapter.send(
             OutgoingMessage(
                 channel="telegram",
-                chat_id=chat_id,
-                text=text,
+                chat_id=str(chat_id),   # 🔥 FORCE STRING
+                text=text or "EMPTY_MESSAGE",
             )
         )
         
