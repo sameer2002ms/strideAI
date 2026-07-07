@@ -8,7 +8,7 @@ import ProtectedRoute from "./routes/ProtectedRoutes";
 import PublicRoute from "./routes/PublicRoutes";
 import Goals from "./pages/Goals";
 import Checkins from "./pages/Checkins";
-import Chat from "./pages/Chat";
+import Chat from "./pages/chat";
 import Telegram from "./pages/Telegram";
 import Settings from "./pages/Settings";
 
