@@ -7,15 +7,32 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load session on app start
-  useEffect(() => {
+  // Load session on app start by asking the backend who the token belongs to
+  const loadCurrentUser = async () => {
     const token = localStorage.getItem("access_token");
 
-    if (token) {
-      setUser({ token });
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
     }
 
-    setLoading(false);
+    try {
+      const res = await api.get("/auth/me/");
+      setUser(res.data);
+    } catch (err) {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      setUser(null);
+      window.location.href = "/login";
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCurrentUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Login
@@ -28,7 +45,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem("access_token", res.data.access);
     localStorage.setItem("refresh_token", res.data.refresh);
 
-    setUser(res.data.user || { username });
+    setUser(res.data.user);
 
     return res.data;
   };
@@ -40,7 +57,17 @@ export function AuthProvider({ children }) {
   };
 
   // Logout
-  const logout = () => {
+  const logout = async () => {
+    const refreshToken = localStorage.getItem("refresh_token");
+
+    try {
+      if (refreshToken) {
+        await api.post("/auth/logout/", { refresh: refreshToken });
+      }
+    } catch (err) {
+      // proceed with local logout even if the request fails
+    }
+
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
 
@@ -57,7 +84,8 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
-        isAuthenticated: !!localStorage.getItem("access_token"),
+        loadCurrentUser,
+        isAuthenticated: !!user,
       }}
     >
       {children}

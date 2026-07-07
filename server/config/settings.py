@@ -28,21 +28,29 @@ if env_file.exists():
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g7rvx0s-63zn#p3-cf76e(xt*q$uqjwy$c9t+d+3n6j^@vz8z^'
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = [".vercel.app", "localhost:5173", "127.0.0.1",
-    "localhost", ".trycloudflare.com",]
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1"
+).split(",")
 
-CSRF_TRUSTED_ORIGINS = ["https://*.vercel.app", "http://localhost:5173", "http://127.0.0.1:5173"]
+
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173",
+).split(",")
+
 
 # Allow local frontend development origin for CORS
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+CORS_ALLOWED_ORIGINS = os.getenv(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173",
+).split(",")
 # Allow cookies / credentials if frontend needs them
 CORS_ALLOW_CREDENTIALS = True
 
@@ -117,7 +125,7 @@ DATABASES = {
     "default": dj_database_url.parse(
         DATABASE_URL,
         conn_max_age=600,
-        ssl_require=True,
+        ssl_require=os.getenv("DB_SSL", "True").lower() == "true"
     )
 }
 
@@ -156,7 +164,7 @@ OPENAI_MODEL = os.getenv(
 )
 
 AI_PROVIDER = os.getenv(
-    "AI_PROIDER",
+    "AI_PROVIDER",
     default="openai",
 )   
 

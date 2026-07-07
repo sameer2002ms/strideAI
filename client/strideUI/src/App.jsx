@@ -10,6 +10,7 @@ import Goals from "./pages/Goals";
 import Checkins from "./pages/Checkins";
 import Chat from "./pages/Chat";
 import Telegram from "./pages/Telegram";
+import Settings from "./pages/Settings";
 
 export default function App() {
   return (
@@ -73,6 +74,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <Telegram />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+      path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
           </ProtectedRoute>
         }
       />

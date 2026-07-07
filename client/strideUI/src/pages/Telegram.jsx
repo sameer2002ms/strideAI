@@ -1,19 +1,33 @@
 import { useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
-import { generateTelegramToken } from "../services/telegramAPI";
+import { createTelegramLink } from "../services/telegramAPI.js";
+
+// 📌 Surfaces DRF validation errors without introducing a new error component
+function extractErrorMessage(err) {
+  const data = err?.response?.data;
+  if (!data) return "Something went wrong. Please try again.";
+  if (typeof data === "string") return data;
+  if (data.detail) return data.detail;
+  const firstKey = Object.keys(data)[0];
+  const firstVal = data?.[firstKey];
+  if (Array.isArray(firstVal)) return `${firstKey}: ${firstVal[0]}`;
+  return "Something went wrong. Please try again.";
+}
 
 export default function Telegram() {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleGenerate = async () => {
     setLoading(true);
+    setError(null);
 
     try {
-      const res = await generateTelegramToken();
+      const res = await createTelegramLink();
       setToken(res.token);
     } catch (err) {
-      console.error(err);
+      setError(extractErrorMessage(err));
     }
 
     setLoading(false);
@@ -37,10 +51,13 @@ export default function Telegram() {
 
         <button
           onClick={handleGenerate}
-          className="bg-blue-600 px-4 py-2 rounded"
+          disabled={loading}
+          className="bg-blue-600 px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Generating..." : "Generate Link Token"}
         </button>
+
+        {error && <p className="text-sm text-red-400 mt-3">{error}</p>}
 
         {token && (
           <div className="mt-4 p-3 bg-gray-800 rounded">

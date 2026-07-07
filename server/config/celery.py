@@ -24,6 +24,6 @@ app.conf.beat_schedule = {
 
     "daily-reminders": {
         "task": "checkins.tasks_reminder.send_daily_reminders",
-        "schedule": crontab(minute="*/1"),  # TEMP TEST
+        "schedule": crontab(minute="*/300"),  # TEMP TEST
     },
 }
