@@ -1,9 +1,16 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// Base URL for the Django REST Framework backend.
+const API_DOMAIN =
+  import.meta.env.VITE_API_DOMAIN || "http://localhost:8000";
+
+const API_VERSION =
+  import.meta.env.VITE_API_VERSION || "v1";
+
+export const API_BASE_URL = `${API_DOMAIN}/api/${API_VERSION}`;
 
 const api = axios.create({
-  baseURL: API_BASE_URL + "/api/v1",
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
