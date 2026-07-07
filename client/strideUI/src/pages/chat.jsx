@@ -89,7 +89,7 @@ export default function Chat() {
     setError(null);
     try {
       const newChat = await createConversation({
-        channel: "WEB",
+        channel: "web",
         metadata: {},
       });
       setConversations((prev) => [newChat, ...prev]);

@@ -134,7 +134,7 @@ export default function Goals() {
           interval: 1,
           start_date: startDate,
           end_date: null,
-          custom_rule: "",
+          custom_rule: {},
         },
       });
       await loadGoals();

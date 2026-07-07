@@ -2,10 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import {
   getCheckins,
+  createCheckin,
+  deleteCheckin,
   completeCheckin,
   missCheckin,
   skipCheckin,
 } from "../services/checkinsApi.js";
+import { getGoals } from "../services/goalsApi.js";
 
 const STATUS_META = {
   pending: {
@@ -14,19 +17,19 @@ const STATUS_META = {
     bg: "bg-gray-500/10",
     dot: "bg-gray-400",
   },
-  complete: {
+  completed: {
     label: "Completed",
     text: "text-[#22C55E]",
     bg: "bg-[#22C55E]/10",
     dot: "bg-[#22C55E]",
   },
-  miss: {
+  missed: {
     label: "Missed",
     text: "text-[#EF4444]",
     bg: "bg-[#EF4444]/10",
     dot: "bg-[#EF4444]",
   },
-  skip: {
+  skipped: {
     label: "Skipped",
     text: "text-gray-400",
     bg: "bg-gray-500/10",
@@ -77,7 +80,10 @@ const TODAY_LABEL = new Date().toLocaleDateString(undefined, {
 
 export default function Checkins() {
   const [checkins, setCheckins] = useState([]);
+  const [goals, setGoals] = useState([]);
+  const [selectedGoalId, setSelectedGoalId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
   const [error, setError] = useState(null);
 
@@ -89,6 +95,7 @@ export default function Checkins() {
       const data = await getCheckins();
       const todaysOnly = (data || []).filter((c) => c.date === todayISODate());
       setCheckins(todaysOnly);
+      return todaysOnly;
     } catch (err) {
       setError(extractErrorMessage(err));
     }
@@ -97,10 +104,47 @@ export default function Checkins() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      await loadCheckins();
+      try {
+        const activeGoals = await getGoals("active");
+        setGoals(activeGoals || []);
+        const todaysCheckins = await loadCheckins();
+        const firstEligibleGoal = activeGoals?.find(
+          (goal) => !todaysCheckins?.some((checkin) => checkin.goal === goal.id),
+        );
+        setSelectedGoalId(String(firstEligibleGoal?.id || ""));
+      } catch (err) {
+        setError(extractErrorMessage(err));
+      }
       setLoading(false);
     })();
   }, []);
+
+  const handleCreate = async () => {
+    if (!selectedGoalId) {
+      setError("Create an active goal before adding a check-in.");
+      return;
+    }
+
+    setCreating(true);
+    setError(null);
+    try {
+      await createCheckin({
+        goal: Number(selectedGoalId),
+        date: todayISODate(),
+      });
+      await loadCheckins();
+      const nextGoal = goals.find(
+        (goal) =>
+          String(goal.id) !== selectedGoalId &&
+          !checkins.some((checkin) => checkin.goal === goal.id),
+      );
+      setSelectedGoalId(nextGoal ? String(nextGoal.id) : "");
+    } catch (err) {
+      setError(extractErrorMessage(err));
+    } finally {
+      setCreating(false);
+    }
+  };
 
   // 📌 Update status via the dedicated complete/miss/skip endpoints
   const handleUpdate = async (id, status) => {
@@ -119,15 +163,35 @@ export default function Checkins() {
     }
   };
 
+  const handleDelete = async (id) => {
+    setUpdatingId(id);
+    setError(null);
+    try {
+      await deleteCheckin(id);
+      await loadCheckins();
+      const firstEligibleGoal = goals.find(
+        (goal) => goal.id === checkins.find((checkin) => checkin.id === id)?.goal,
+      );
+      if (firstEligibleGoal) setSelectedGoalId(String(firstEligibleGoal.id));
+    } catch (err) {
+      setError(extractErrorMessage(err));
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   const completedCount = useMemo(
     () =>
-      checkins.filter((c) => (c.status || "").toLowerCase() === "complete")
+      checkins.filter((c) => (c.status || "").toLowerCase() === "completed")
         .length,
     [checkins],
   );
   const progressPct = checkins.length
     ? Math.round((completedCount / checkins.length) * 100)
     : 0;
+  const eligibleGoals = goals.filter(
+    (goal) => !checkins.some((checkin) => checkin.goal === goal.id),
+  );
 
   return (
     <DashboardLayout>
@@ -144,6 +208,37 @@ export default function Checkins() {
         {error && (
           <div className="mb-6 px-4 py-3 rounded-2xl bg-[#EF4444]/10 border border-[#EF4444]/30 text-sm text-[#EF4444]">
             {error}
+          </div>
+        )}
+
+        {/* Manual fallback when the daily Celery task has not run. */}
+        {!loading && (
+          <div className="flex flex-col sm:flex-row gap-3 mb-6 rounded-2xl border border-[#27272A] bg-[#111827] p-4">
+            <select
+              value={selectedGoalId}
+              onChange={(event) => setSelectedGoalId(event.target.value)}
+              disabled={creating || eligibleGoals.length === 0}
+              aria-label="Goal for today's check-in"
+              className="min-w-0 flex-1 rounded-xl border border-[#27272A] bg-[#18181B] px-3 py-2.5 text-sm text-white outline-none focus:border-[#FACC15] disabled:opacity-50"
+            >
+              {eligibleGoals.length === 0 ? (
+                <option value="">All active goals have a check-in today</option>
+              ) : (
+                eligibleGoals.map((goal) => (
+                  <option key={goal.id} value={goal.id}>
+                    {goal.title}
+                  </option>
+                ))
+              )}
+            </select>
+            <button
+              type="button"
+              onClick={handleCreate}
+              disabled={creating || !selectedGoalId}
+              className="rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#0F172A] transition-colors hover:bg-[#EAB308] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {creating ? "Creating..." : "Create today's check-in"}
+            </button>
           </div>
         )}
 
@@ -186,9 +281,13 @@ export default function Checkins() {
               {checkins.map((c) => {
                 const meta = statusMeta(c.status);
                 const isUpdating = updatingId === c.id;
+                const isPending = (c.status || "").toLowerCase() === "pending";
                 // Backend object only guarantees `goal` (id) + `notes`, not a title.
                 // Fall back gracefully so the card never renders blank.
-                const title = c.goal_title || c.notes || `Goal #${c.goal}`;
+                const title =
+                  goals.find((goal) => goal.id === c.goal)?.title ||
+                  c.notes ||
+                  `Goal #${c.goal}`;
 
                 return (
                   <li key={c.id} className="relative">
@@ -220,10 +319,10 @@ export default function Checkins() {
                         </div>
 
                         {/* ACTIONS */}
-                        <div className="flex gap-2 flex-shrink-0">
+                        <div className="flex flex-wrap gap-2 flex-shrink-0">
                           <button
                             onClick={() => handleUpdate(c.id, "complete")}
-                            disabled={isUpdating}
+                            disabled={isUpdating || !isPending}
                             className="px-3 py-1.5 rounded-xl text-sm font-medium
                                        bg-[#22C55E]/10 text-[#22C55E]
                                        hover:bg-[#22C55E]/20 hover:scale-105 active:scale-95
@@ -235,7 +334,7 @@ export default function Checkins() {
 
                           <button
                             onClick={() => handleUpdate(c.id, "miss")}
-                            disabled={isUpdating}
+                            disabled={isUpdating || !isPending}
                             className="px-3 py-1.5 rounded-xl text-sm font-medium
                                        bg-[#EF4444]/10 text-[#EF4444]
                                        hover:bg-[#EF4444]/20 hover:scale-105 active:scale-95
@@ -247,7 +346,7 @@ export default function Checkins() {
 
                           <button
                             onClick={() => handleUpdate(c.id, "skip")}
-                            disabled={isUpdating}
+                            disabled={isUpdating || !isPending}
                             className="px-3 py-1.5 rounded-xl text-sm font-medium
                                        bg-[#27272A] text-gray-300
                                        hover:bg-[#3f3f46] hover:scale-105 active:scale-95
@@ -255,6 +354,18 @@ export default function Checkins() {
                                        transition-all duration-200 ease-in-out"
                           >
                             Skip
+                          </button>
+
+                          <button
+                            onClick={() => handleDelete(c.id)}
+                            disabled={isUpdating}
+                            className="px-3 py-1.5 rounded-xl text-sm font-medium
+                                       bg-[#EF4444]/10 text-[#EF4444]
+                                       hover:bg-[#EF4444]/20 hover:scale-105 active:scale-95
+                                       disabled:opacity-40 disabled:cursor-not-allowed
+                                       transition-all duration-200 ease-in-out"
+                          >
+                            Delete
                           </button>
                         </div>
                       </div>
