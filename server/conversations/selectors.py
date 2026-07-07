@@ -60,3 +60,17 @@ def get_recent_conversation_messages(
     )
 
     return list(reversed(messages))
+
+
+
+def get_active_conversation(*, user, channel):
+    return (
+        Conversation.objects
+        .filter(
+            user=user,
+            channel=channel,
+            status=Conversation.Status.ACTIVE,
+        )
+        .order_by("-created_at")
+        .first()
+    )

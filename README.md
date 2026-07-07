@@ -314,3 +314,98 @@ Right now send_message() creates an AgentEngine instance directly:
 engine = AgentEngine()
 
 This is acceptable for now, but later we can inject dependencies if needed. I would not change it today. It isn't causing any problems, and it doesn't block features.
+
+
+
+
+PHASE 6 — CELERY FOUNDATION (NEXT STEP)
+
+We will build:
+
+Step 1
+Celery setup
+Redis connection
+Django integration
+Step 2
+periodic tasks
+🧭 PHASE 7 — DAILY CHECK-IN ENGINE
+
+Automate:
+
+create today's check-ins
+for all active goals
+🧭 PHASE 8 — TELEGRAM BOT
+
+Then:
+
+user receives message daily
+bot triggers AI engine
+🧭 PHASE 9 — PROACTIVE AI
+
+AI starts:
+
+asking questions
+pushing user
+reacting without prompt
+🧠 BIG REALIZATION
+
+Right now your system is:
+
+Chatbot + database
+
+After Celery:
+
+Behavior system that runs itself
+
+
+
+🔴 MUST HAVE (before real users)
+1. Telegram production hardening
+
+Right now you need:
+
+Webhook verification (secret token check)
+Retry handling for failed Telegram sends
+Logging for every incoming message
+Error fallback responses
+2. AI context quality upgrade (VERY IMPORTANT)
+
+Currently AI works, but it is still basic.
+
+You need:
+
+Add into context:
+recent messages (you have this partially)
+user goals
+check-in status
+daily schedule
+memory facts (long-term)
+
+👉 Without this, AI = chat bot
+👉 With this, AI = accountability agent
+
+3. Idempotency (critical for Telegram)
+
+Telegram can resend webhooks.
+
+You need:
+
+message_id tracking
+prevent duplicate processing
+4. Conversation lifecycle rules
+
+Right now conversations are:
+
+always active forever
+
+You need rules like:
+
+inactivity timeout (e.g. 24h → new conversation)
+daily reset option (for check-ins)
+5. Failure handling (Celery + AI)
+
+You need:
+
+retry AI call if OpenAI fails
+fallback response ("I couldn’t process this")
+dead letter logging

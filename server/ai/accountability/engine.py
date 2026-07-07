@@ -9,6 +9,7 @@ from ai.builder import ContextBuilder
 from ai.accountability.intent_detector import IntentDetector
 from ai.accountability.intent import IntentType
 from ai.accountability.behavior_engine import BehaviorEngine
+from ai.schemas import ReasoningResponse
 
 class AccountabilityEngine:
     """
@@ -58,6 +59,8 @@ class AccountabilityEngine:
         prompt = PromptBuilder.build(context=context)
 
         # 7. Generate AI response
-        response = self.reasoning.generate(prompt=prompt)
-
+        response = self.reasoning.generate(
+            prompt=prompt,
+            response_model=ReasoningResponse,
+        )
         return response
