@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from channels.models import ChannelAccount, ChannelType
+from channels.schemas import IncomingMessage
 from channels.service import ChannelService
 
 
@@ -83,3 +84,57 @@ class TelegramRelinkingTests(APITestCase):
         self.assertEqual(account.user, new_user)
         self.assertEqual(account.username, "stride_user")
         self.assertTrue(token.is_used)
+
+    def test_link_command_is_processed_before_existing_account_chat(self):
+        old_user = User.objects.create_user(username="previous-owner")
+        new_user = User.objects.create_user(username="current-owner")
+        account = ChannelAccount.objects.create(
+            user=old_user,
+            channel=ChannelType.TELEGRAM,
+            external_user_id="443980788",
+            chat_id="443980788",
+        )
+        token = ChannelService().create_link_token(new_user)
+        message = IncomingMessage(
+            channel=ChannelType.TELEGRAM,
+            external_user_id="443980788",
+            chat_id="443980788",
+            text=f"/link {token.token}",
+            first_name="Sameer",
+            metadata={
+                "message": {
+                    "from": {
+                        "id": 443980788,
+                        "first_name": "Sameer",
+                    },
+                },
+            },
+        )
+
+        link_status = ChannelService().handle_incoming_message(message)
+
+        account.refresh_from_db()
+        self.assertEqual(link_status, "LINKED")
+        self.assertEqual(account.user, new_user)
+
+    def test_start_deep_link_connects_telegram_account(self):
+        user = User.objects.create_user(username="deep-link-user")
+        token = ChannelService().create_link_token(user)
+        message = IncomingMessage(
+            channel=ChannelType.TELEGRAM,
+            external_user_id="98765",
+            chat_id="98765",
+            text=f"/start {token.token}",
+            metadata={"message": {"from": {"id": 98765}}},
+        )
+
+        link_status = ChannelService().handle_incoming_message(message)
+
+        self.assertEqual(link_status, "LINKED")
+        self.assertTrue(
+            ChannelAccount.objects.filter(
+                user=user,
+                channel=ChannelType.TELEGRAM,
+                external_user_id="98765",
+            ).exists()
+        )

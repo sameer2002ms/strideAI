@@ -1,263 +1,290 @@
-/* @import "tailwindcss";
-
-
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-body {
-  margin: 0;
-}
-
-#root {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
-
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.25s ease-out;
-} */
-
-
-
 @import "tailwindcss";
 
-
 :root {
-  --text: #6b6355;
-  --text-h: #1c1608;
-  --bg: #fffdf8;
-  --border: #ece4d3;
-  --code-bg: #f6f0e4;
-  --accent: #eab308;
-  --accent-bg: rgba(234, 179, 8, 0.1);
-  --accent-border: rgba(234, 179, 8, 0.5);
-  --social-bg: rgba(246, 240, 228, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.08) 0 10px 15px -3px, rgba(0, 0, 0, 0.04) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #171922;
+  background: #f7f8fb;
+  color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  /* Neutrals — cool, paper-white base instead of cream */
+  --paper: #f7f8fb;
+  --cream: #eef0f5;      /* kept name for compatibility, cool tone now */
+  --sand: #dfe2ea;       /* kept name for compatibility */
+  --warm-gray: #767b88;
+  --ink: #171922;
+  --surface: #ffffff;
+  --border: #e3e6ee;
+  --border-strong: #cbd0db;
+
+  /* Accent — deep slate-emerald, not blue/violet */
+  --accent: #0d9488;
+  --accent-strong: #0f766e;
+  --accent-soft: #e6f5f3;
+  --coral: #0d9488;        /* legacy alias, remapped to new accent */
+  --coral-strong: #0f766e; /* legacy alias, remapped to new accent */
+
+  /* Semantic colors */
+  --success: #12b76a;
+  --success-soft: #e8f9f0;
+  --warning: #f79009;
+  --warning-soft: #fef2e0;
+  --danger: #f04438;
+  --danger-soft: #feecec;
+
+  /* Shadows & radius tokens */
+  --shadow-sm: 0 1px 2px rgba(23, 25, 34, 0.04);
+  --shadow-md: 0 4px 16px rgba(23, 25, 34, 0.06), 0 1px 2px rgba(23, 25, 34, 0.04);
+  --shadow-lg: 0 16px 40px rgba(23, 25, 34, 0.09), 0 2px 6px rgba(23, 25, 34, 0.05);
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #b9ae99;
-    --text-h: #f8f3e8;
-    --bg: #1a170f;
-    --border: #34301f;
-    --code-bg: #24211a;
-    --accent: #facc15;
-    --accent-bg: rgba(250, 204, 21, 0.15);
-    --accent-border: rgba(250, 204, 21, 0.5);
-    --social-bg: rgba(52, 48, 31, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #f7f8fb;
 }
+
+button, input, textarea, select { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
 
 #root {
   width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h1, h2, h3 { color: inherit; letter-spacing: -0.01em; }
+p { margin: 0; }
+
+/* Prevent unstyled anchors from falling back to the browser's default blue */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:not([class]) {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
+.animate-fade-in { animation: page-enter 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* App shell */
+.dashboard-light {
+  background:
+    radial-gradient(circle at 85% 8%, rgba(13, 148, 136, 0.08), transparent 30rem),
+    radial-gradient(circle at 8% 95%, rgba(217, 119, 6, 0.05), transparent 28rem),
+    linear-gradient(180deg, #f9fafc 0%, #f5f6fa 55%, #eef0f5 100%) !important;
+  color: var(--ink);
+}
+
+.dashboard-light aside {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: var(--border) !important;
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-light header {
+  height: 4.5rem;
+  background: rgba(255, 255, 255, 0.72) !important;
+  border-color: var(--border) !important;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+.dashboard-light main {
+  padding: clamp(1.25rem, 2.6vw, 2.5rem);
+  animation: page-enter 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.dashboard-light nav a {
+  min-height: 2.75rem;
+  border-radius: var(--radius-md);
+  transition: background 160ms ease, color 160ms ease, transform 120ms ease;
+}
+
+.dashboard-light nav a:hover { transform: translateX(1px); }
+
+.dashboard-light nav a[aria-current="page"],
+.dashboard-light nav a.active {
+  background: var(--accent-soft) !important;
+  color: var(--accent-strong) !important;
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.dashboard-light :focus-visible {
+  outline: 2.5px solid rgba(13, 148, 136, 0.35);
+  outline-offset: 2px;
   border-radius: 4px;
-  color: var(--text-h);
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* Surfaces inherited by older pages */
+.dashboard-light main [class~="bg-[#111827]"],
+.dashboard-light main .bg-gray-900 {
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 180ms ease, transform 180ms ease;
 }
 
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.dashboard-light main [class~="bg-[#111827]"]:hover,
+.dashboard-light main .bg-gray-900:hover {
+  box-shadow: var(--shadow-lg);
 }
 
-.animate-fade-in {
-  animation: fade-in 0.25s ease-out;
+.dashboard-light [class~="bg-[#18181B]"],
+.dashboard-light .bg-gray-800 {
+  background-color: var(--cream) !important;
+}
+
+.dashboard-light [class~="bg-[#27272A]"] {
+  background-color: #e3e6ee !important;
+}
+
+.dashboard-light [class~="border-[#27272A]"],
+.dashboard-light [class~="border-slate-200"] {
+  border-color: var(--border) !important;
+}
+
+.dashboard-light main [class~="text-white"]:not(button):not(a) { color: var(--ink) !important; }
+.dashboard-light [class~="text-gray-100"] { color: #2a2d38 !important; }
+.dashboard-light [class~="text-gray-300"] { color: #454957 !important; }
+.dashboard-light [class~="text-gray-400"] { color: #6b7080 !important; }
+.dashboard-light [class~="text-gray-500"] { color: var(--warm-gray) !important; }
+
+/* Accent remapping */
+.dashboard-light [class~="bg-[#FACC15]"] { background-color: var(--accent-strong) !important; }
+.dashboard-light [class~="bg-[#FACC15]/10"] { background-color: var(--accent-soft) !important; }
+.dashboard-light [class~="text-[#FACC15]"] { color: var(--accent-strong) !important; }
+.dashboard-light [class~="text-[#0F172A]"] { color: #fff !important; }
+.dashboard-light [class~="ring-[#0F172A]"] { --tw-ring-color: #f7f8fb !important; }
+
+.dashboard-light [class*="bg-indigo-"],
+.dashboard-light [class*="bg-violet-"],
+.dashboard-light [class*="bg-blue-600"],
+.dashboard-light [class*="bg-sky-600"] {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%) !important;
+}
+
+.dashboard-light [class*="bg-indigo-50"],
+.dashboard-light [class*="bg-indigo-100"],
+.dashboard-light [class*="bg-indigo-200"],
+.dashboard-light [class*="bg-blue-50"],
+.dashboard-light [class*="bg-blue-100"],
+.dashboard-light [class*="bg-sky-50"] { background-color: var(--accent-soft) !important; }
+
+.dashboard-light [class*="text-indigo-"],
+.dashboard-light [class*="text-violet-"],
+.dashboard-light [class*="text-blue-"],
+.dashboard-light [class*="text-sky-"] { color: var(--accent-strong) !important; }
+
+.dashboard-light [class*="border-indigo-"],
+.dashboard-light [class*="border-blue-"],
+.dashboard-light [class*="border-sky-"] { border-color: var(--border-strong) !important; }
+
+.dashboard-light [class*="from-indigo-"],
+.dashboard-light [class~="from-[#FACC15]"] {
+  --tw-gradient-from: var(--accent) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(15 118 110 / 0) var(--tw-gradient-to-position) !important;
+}
+
+.dashboard-light [class*="to-violet-"],
+.dashboard-light [class~="to-[#F59E0B]"] {
+  --tw-gradient-to: var(--accent-strong) var(--tw-gradient-to-position) !important;
+}
+
+.dashboard-light [class*="from-sky-50"] {
+  --tw-gradient-from: #f8f8fd var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(248 248 253 / 0) var(--tw-gradient-to-position) !important;
+}
+.dashboard-light [class*="to-blue-100"] { --tw-gradient-to: var(--accent-soft) var(--tw-gradient-to-position) !important; }
+.dashboard-light [class~="bg-[#229ED9]/10"] { background-color: var(--accent-soft) !important; }
+.dashboard-light [class~="text-[#229ED9]"] { color: var(--accent-strong) !important; }
+
+/* Semantic status colors — success / warning / error, common in modern dashboards */
+.dashboard-light [class*="bg-green-"],
+.dashboard-light [class*="bg-emerald-"] { background-color: var(--success-soft) !important; }
+.dashboard-light [class*="text-green-"],
+.dashboard-light [class*="text-emerald-"] { color: var(--success) !important; }
+
+.dashboard-light [class*="bg-amber-"],
+.dashboard-light [class*="bg-yellow-"] { background-color: var(--warning-soft) !important; }
+.dashboard-light [class*="text-amber-"],
+.dashboard-light [class*="text-yellow-"] { color: var(--warning) !important; }
+
+.dashboard-light [class*="bg-red-"],
+.dashboard-light [class*="bg-rose-"] { background-color: var(--danger-soft) !important; }
+.dashboard-light [class*="text-red-"],
+.dashboard-light [class*="text-rose-"] { color: var(--danger) !important; }
+
+/* Modern controls */
+.dashboard-light input,
+.dashboard-light textarea,
+.dashboard-light select {
+  color-scheme: light;
+  border-radius: var(--radius-md);
+  border-color: var(--border) !important;
+  background: var(--surface);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.dashboard-light input::placeholder,
+.dashboard-light textarea::placeholder { color: #a3a8b5; }
+
+.dashboard-light input:focus,
+.dashboard-light textarea:focus,
+.dashboard-light select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.13);
+}
+
+.dashboard-light button,
+.dashboard-light a {
+  transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 120ms ease;
+}
+
+.dashboard-light button[class*="hover:bg-indigo-"]:hover,
+.dashboard-light button[class*="hover:bg-blue-"]:hover,
+.dashboard-light a[class*="hover:bg-indigo-"]:hover,
+.dashboard-light a[class*="hover:bg-blue-"]:hover {
+  background-color: var(--accent-strong) !important;
+  box-shadow: 0 6px 18px rgba(15, 118, 110, 0.22);
+}
+
+.dashboard-light button:active,
+.dashboard-light a:active { transform: scale(0.98); }
+
+/* Cards get a touch of lift on hover for interactive dashboards */
+.dashboard-light main [class*="rounded"][class*="border"]:hover {
+  border-color: var(--border-strong) !important;
+}
+
+@media (max-width: 640px) {
+  .dashboard-light aside { width: 5rem !important; }
+  .dashboard-light aside nav span:not(.absolute),
+  .dashboard-light aside > div:last-child p,
+  .dashboard-light aside > div:last-child button:not(:has(svg:only-child)) { font-size: 0; }
+  .dashboard-light header { padding-inline: 1rem; }
+  .dashboard-light main { padding: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }

@@ -5,6 +5,9 @@ import {
   getTelegramStatus,
 } from "../services/telegramAPI.js";
 
+const TELEGRAM_BOT_USERNAME =
+  import.meta.env.VITE_TELEGRAM_BOT_USERNAME || "Stride_AIbot";
+
 // 📌 Surfaces DRF validation errors without introducing a new error component
 function extractErrorMessage(err) {
   const data = err?.response?.data;
@@ -60,10 +63,14 @@ export default function Telegram() {
 
   return (
     <DashboardLayout>
-      <h1 className="text-2xl font-bold mb-4">Telegram Integration</h1>
+      <div className="max-w-4xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Telegram Integration</h1>
+        <p className="mt-1 text-sm text-slate-500">Connect your account for reminders and check-ins on the go.</p>
+      </div>
 
       {/* STATUS CARD */}
-      <div className="bg-gray-900 p-4 rounded-xl mb-4">
+      <div className="bg-gray-900 border border-slate-200 p-5 rounded-2xl mb-4">
         <h2 className="text-gray-400">Status</h2>
         <p
           className={`text-lg ${
@@ -86,13 +93,13 @@ export default function Telegram() {
       </div>
 
       {/* TOKEN GENERATION */}
-      <div className="bg-gray-900 p-4 rounded-xl">
+      <div className="bg-gray-900 border border-slate-200 p-5 rounded-2xl">
         <h2 className="text-gray-400 mb-2">Link your Telegram</h2>
 
         <button
           onClick={handleGenerate}
           disabled={loading}
-          className="bg-blue-600 px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-indigo-600 text-white px-4 py-2.5 rounded-xl font-semibold shadow-sm hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Generating..." : "Generate Link Token"}
         </button>
@@ -105,12 +112,25 @@ export default function Telegram() {
               Send this command in Telegram:
             </p>
             <p className="text-green-400 font-mono mt-2">/link {token}</p>
+            <a
+              href={`https://t.me/${TELEGRAM_BOT_USERNAME}?start=${encodeURIComponent(token)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block mt-3 bg-sky-600 text-white hover:bg-sky-500 px-4 py-2 rounded-xl font-medium"
+            >
+              Open Telegram and connect
+            </a>
+            {!telegramStatus?.linked && (
+              <p className="text-sm text-yellow-300 mt-3">
+                Waiting for confirmation from Telegram…
+              </p>
+            )}
           </div>
         )}
       </div>
 
       {/* INSTRUCTIONS */}
-      <div className="mt-4 bg-gray-900 p-4 rounded-xl">
+      <div className="mt-4 bg-gray-900 border border-slate-200 p-5 rounded-2xl">
         <h2 className="text-gray-400 mb-2">How it works</h2>
 
         <ul className="text-sm text-gray-300 space-y-1">
@@ -119,6 +139,7 @@ export default function Telegram() {
           <li>3. Send /link {"<token>"}</li>
           <li>4. Your account will be linked automatically</li>
         </ul>
+      </div>
       </div>
     </DashboardLayout>
   );
