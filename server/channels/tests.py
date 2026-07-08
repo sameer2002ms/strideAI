@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from channels.models import ChannelAccount, ChannelType
+from channels.service import ChannelService
 
 
 User = get_user_model()
@@ -46,3 +47,39 @@ class TelegramStatusAPITests(APITestCase):
         self.assertTrue(response.data["linked"])
         self.assertEqual(response.data["username"], "stride_user")
         self.assertIsNotNone(response.data["linked_at"])
+
+
+class TelegramRelinkingTests(APITestCase):
+    def test_valid_token_moves_existing_telegram_account_to_current_user(self):
+        old_user = User.objects.create_user(username="old-user")
+        new_user = User.objects.create_user(username="new-user")
+        account = ChannelAccount.objects.create(
+            user=old_user,
+            channel=ChannelType.TELEGRAM,
+            external_user_id="12345",
+            chat_id="12345",
+        )
+        token = ChannelService().create_link_token(new_user)
+
+        linked_account, link_status = ChannelService().link_channel(
+            channel=ChannelType.TELEGRAM,
+            token=token.token,
+            external_user_id="12345",
+            chat_id="12345",
+            metadata={
+                "message": {
+                    "from": {
+                        "username": "stride_user",
+                        "first_name": "Stride",
+                    },
+                },
+            },
+        )
+
+        account.refresh_from_db()
+        token.refresh_from_db()
+        self.assertEqual(link_status, "LINKED")
+        self.assertEqual(linked_account.pk, account.pk)
+        self.assertEqual(account.user, new_user)
+        self.assertEqual(account.username, "stride_user")
+        self.assertTrue(token.is_used)

@@ -56,7 +56,7 @@ def telegram_webhook(request):
             text="❌ Invalid link token.",
         )
 
-    elif result == "EXPIRED":
+    elif result == "TOKEN_EXPIRED":
         service.send_telegram_response(
             chat_id=message.chat_id,
             text="⏳ Link token expired.",

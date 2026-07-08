@@ -39,18 +39,43 @@ class ChannelService:
         )
 
         if existing:
+            # A valid one-time token proves access to the target web account,
+            # while this message proves control of the Telegram account. This
+            # safely supports moving Telegram from an old StrideAI account.
+            if existing.user_id != link_token.user_id:
+                telegram_user = metadata.get("message", {}).get("from", {})
+                existing.user = link_token.user
+                existing.chat_id = chat_id
+                existing.username = telegram_user.get("username", "")
+                existing.first_name = telegram_user.get("first_name", "")
+                existing.last_name = telegram_user.get("last_name", "")
+                existing.metadata = metadata
+                existing.is_active = True
+                existing.save()
+
+                link_token.is_used = True
+                link_token.save(update_fields=["is_used"])
+                return existing, "LINKED"
+
+            link_token.is_used = True
+            link_token.save(update_fields=["is_used"])
             return existing, "ALREADY_LINKED"
+
+        telegram_user = metadata.get("message", {}).get("from", {})
 
         account = ChannelAccount.objects.create(
             user=link_token.user,
             channel=channel,
             external_user_id=external_user_id,
             chat_id=chat_id,
+            username=telegram_user.get("username", ""),
+            first_name=telegram_user.get("first_name", ""),
+            last_name=telegram_user.get("last_name", ""),
             metadata=metadata,
         )
 
         link_token.is_used = True
-        link_token.save()
+        link_token.save(update_fields=["is_used"])
 
         return account, "LINKED"
     

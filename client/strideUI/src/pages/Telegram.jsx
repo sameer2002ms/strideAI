@@ -34,12 +34,15 @@ export default function Telegram() {
 
   useEffect(() => {
     const initialCheckId = window.setTimeout(refreshStatus, 0);
-    const intervalId = window.setInterval(refreshStatus, 5000);
-    return () => {
-      window.clearTimeout(initialCheckId);
-      window.clearInterval(intervalId);
-    };
+    return () => window.clearTimeout(initialCheckId);
   }, [refreshStatus]);
+
+  useEffect(() => {
+    if (!token || telegramStatus?.linked) return undefined;
+
+    const intervalId = window.setInterval(refreshStatus, 5000);
+    return () => window.clearInterval(intervalId);
+  }, [refreshStatus, telegramStatus?.linked, token]);
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -73,6 +76,13 @@ export default function Telegram() {
               ? `Linked${telegramStatus.username ? ` as @${telegramStatus.username}` : ""}`
               : "Not linked"}
         </p>
+        <button
+          type="button"
+          onClick={refreshStatus}
+          className="mt-2 text-sm text-blue-400 hover:text-blue-300"
+        >
+          Refresh status
+        </button>
       </div>
 
       {/* TOKEN GENERATION */}
