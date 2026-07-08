@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from channels.parsers.telegram import TelegramParser
 from channels.service import ChannelService
-from channels.models import ChannelType
+from channels.models import ChannelAccount, ChannelType
 
 @api_view(["POST"])
 def telegram_webhook(request):
@@ -80,7 +80,29 @@ def create_telegram_link(request):
         "token": token_obj.token,
         "expires_at": token_obj.expires_at,
     })
-    
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def telegram_status(request):
+    account = (
+        ChannelAccount.objects
+        .filter(
+            user=request.user,
+            channel=ChannelType.TELEGRAM,
+            is_active=True,
+        )
+        .only("username", "created_at")
+        .first()
+    )
+
+    return Response({
+        "linked": account is not None,
+        "username": (account.username or None) if account else None,
+        "linked_at": account.created_at if account else None,
+    })
+
+
 def handle_telegram_link(self, message, token: str):
 
     account, status = self.link_channel(
@@ -91,4 +113,4 @@ def handle_telegram_link(self, message, token: str):
         metadata=message.metadata,
     )
 
-    return account, status    
+    return account, status

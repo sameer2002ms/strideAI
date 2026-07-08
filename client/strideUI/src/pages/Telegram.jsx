@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
-import { createTelegramLink } from "../services/telegramAPI.js";
+import {
+  createTelegramLink,
+  getTelegramStatus,
+} from "../services/telegramAPI.js";
 
 // 📌 Surfaces DRF validation errors without introducing a new error component
 function extractErrorMessage(err) {
@@ -18,6 +21,25 @@ export default function Telegram() {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [telegramStatus, setTelegramStatus] = useState(null);
+
+  const refreshStatus = useCallback(async () => {
+    try {
+      const status = await getTelegramStatus();
+      setTelegramStatus(status);
+    } catch (err) {
+      setError(extractErrorMessage(err));
+    }
+  }, []);
+
+  useEffect(() => {
+    const initialCheckId = window.setTimeout(refreshStatus, 0);
+    const intervalId = window.setInterval(refreshStatus, 5000);
+    return () => {
+      window.clearTimeout(initialCheckId);
+      window.clearInterval(intervalId);
+    };
+  }, [refreshStatus]);
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -40,8 +62,16 @@ export default function Telegram() {
       {/* STATUS CARD */}
       <div className="bg-gray-900 p-4 rounded-xl mb-4">
         <h2 className="text-gray-400">Status</h2>
-        <p className="text-lg text-yellow-400">
-          Not Linked (or fetch from backend later)
+        <p
+          className={`text-lg ${
+            telegramStatus?.linked ? "text-green-400" : "text-yellow-400"
+          }`}
+        >
+          {telegramStatus === null
+            ? "Checking..."
+            : telegramStatus.linked
+              ? `Linked${telegramStatus.username ? ` as @${telegramStatus.username}` : ""}`
+              : "Not linked"}
         </p>
       </div>
 
