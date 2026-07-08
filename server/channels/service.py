@@ -1,9 +1,6 @@
-from django.utils import timezone
-
 from channels.models import ChannelAccount, ChannelLinkToken, ChannelType
 from channels.selectors import get_channel_account
 from .adapters.telegram import TelegramAdapter
-from .schemas import OutgoingMessage
 from .schemas import OutgoingMessage
 from conversations.services import get_or_create_active_conversation, send_message
 
@@ -109,7 +106,14 @@ class ChannelService:
         
         
     def handle_incoming_message(self, message):
-        from channels.models import ChannelAccount, ChannelLinkToken
+        text = (message.text or "").strip()
+        command = text.split(maxsplit=1)[0].split("@", maxsplit=1)[0].lower()
+
+        # Link commands must be handled before the existing-account lookup.
+        # Otherwise a Telegram account linked to an older web user sends the
+        # command into the AI conversation and can never be reassigned.
+        if command in {"/link", "/start"} and len(text.split(maxsplit=1)) == 2:
+            return self._handle_unlinked(message)
 
         account = get_channel_account(
             channel=message.channel,
@@ -125,9 +129,11 @@ class ChannelService:
     def _handle_unlinked(self, message):
 
         text = (message.text or "").strip()
+        parts = text.split(maxsplit=1)
+        command = parts[0].split("@", maxsplit=1)[0].lower() if parts else ""
 
-        if text.startswith("/link"):
-            token = text.replace("/link", "").strip()
+        if command in {"/link", "/start"} and len(parts) == 2:
+            token = parts[1].strip()
 
             account, status = self.link_channel(
                 channel="telegram",

@@ -1,6 +1,3 @@
-import json
-from urllib import request
-
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,8 +11,7 @@ def telegram_webhook(request):
 
     payload = request.data
     
-    print("Webhook hit!")
-    print(request.data)
+    print(f"Telegram webhook hit | update_id={payload.get('update_id')}")
 
     if not payload:
         return Response({"error": "empty payload"}, status=400)

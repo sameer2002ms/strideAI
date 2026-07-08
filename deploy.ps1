@@ -27,7 +27,7 @@ Write-Host "========================================="
 Write-Host "Getting Git Commit Version..."
 Write-Host "========================================="
 
-$IMAGE_TAG = git rev-parse --short HEAD
+$GIT_COMMIT = git rev-parse --short HEAD
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to get Git commit hash."
@@ -35,7 +35,9 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-$IMAGE_TAG = $IMAGE_TAG.Trim()
+$GIT_COMMIT = $GIT_COMMIT.Trim()
+$BUILD_TIMESTAMP = Get-Date -Format "yyyyMMddHHmmss"
+$IMAGE_TAG = "$GIT_COMMIT-$BUILD_TIMESTAMP"
 
 $FULL_IMAGE = "$ACR_NAME.azurecr.io/$IMAGE_NAME`:$IMAGE_TAG"
 
