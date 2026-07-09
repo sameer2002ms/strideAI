@@ -37,7 +37,15 @@ def telegram_webhook(request):
     elif result == "LINKED":
         service.send_telegram_response(
             chat_id=message.chat_id,
-            text="✅ Telegram linked successfully!",
+            text=(
+                "🎉 Welcome to StrideAI!\n\n"
+                "Your Telegram account has been linked successfully. ✅\n\n"
+                "You can now receive personalized reminders and "
+                "accountability check-ins here.\n\n"
+                "Go back to the StrideAI web app to create your goals, "
+                "choose your schedule, and set your reminder time.\n\n"
+                "I’ll be here to help you stay consistent. 🚀"
+            ),
         )
 
     elif result == "ALREADY_LINKED":

@@ -5,8 +5,11 @@ from checkins.selectors import get_pending_checkins_for_date
 
 def get_todays_pending_summary(user):
     """
-    Returns a lightweight summary of pending check-ins.
-    This will later feed Telegram / AI / notifications.
+    Build reminder context for the accountability engine.
+
+    This data will be consumed by:
+    - BehaviorEngine
+    - NotificationDispatcher
     """
 
     today = date.today()
@@ -16,10 +19,20 @@ def get_todays_pending_summary(user):
         date_=today,
     )
 
-    return [
-        {
-            "goal": c.goal.title,
-            "checkin_id": c.id,
-        }
-        for c in checkins
-    ]
+    goals = []
+
+    for checkin in checkins:
+        goals.append(
+            {
+                "checkin_id": checkin.id,
+                "goal": checkin.goal.title,
+                "description": checkin.goal.description,
+                "status": checkin.status,
+                "date": str(checkin.date),
+            }
+        )
+
+    return {
+        "pending_count": len(goals),
+        "goals": goals,
+    }

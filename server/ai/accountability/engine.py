@@ -10,6 +10,7 @@ from ai.accountability.intent_detector import IntentDetector
 from ai.accountability.intent import IntentType
 from ai.accountability.behavior_engine import BehaviorEngine
 from ai.schemas import ReasoningResponse
+from checkins.selectors import get_latest_pending_checkin
 
 class AccountabilityEngine:
     """
@@ -34,17 +35,11 @@ class AccountabilityEngine:
         behavior_instruction = BehaviorEngine.build_instructions(intent)
         context.memory.facts["behavior_instruction"] = behavior_instruction
 
-        # 4. Get today's check-ins
-        today = date.today()
-
-        pending_checkins = get_pending_checkins_for_date(
-            user=conversation.user,
-            date_=today,
+        checkin = get_latest_pending_checkin(
+            user=conversation.user
         )
 
-        # 5. System action layer (CORE BEHAVIOR)
-        if pending_checkins:
-            checkin = pending_checkins[0]
+        if checkin:
 
             if intent == IntentType.COMPLETE:
                 complete_checkin(checkin)

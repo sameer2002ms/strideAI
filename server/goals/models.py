@@ -87,6 +87,12 @@ class GoalSchedule(models.Model):
     interval = models.PositiveIntegerField(
         default=1, validators=[MinValueValidator(1)]
     )
+    reminder_enabled = models.BooleanField(default=True)
+
+    reminder_time = models.TimeField(
+        null=True,
+        blank=True,
+    )
     start_date = models.DateField(default=timezone.localdate)
     end_date = models.DateField(null=True, blank=True)
     # Open-ended rule payload for CUSTOM frequency. Deliberately left

@@ -37,3 +37,28 @@ def get_user_goal_or_404(user, goal_id) -> Goal:
         return Goal.objects.select_related("schedule").get(user=user, pk=goal_id)
     except Goal.DoesNotExist:
         raise Http404("Goal not found.")
+    
+    
+    
+from django.utils import timezone
+
+
+def get_goals_due_for_reminder():
+    """
+    Return goals whose reminder time is due right now.
+    """
+
+    now = timezone.localtime().replace(second=0, microsecond=0).time()
+
+    return (
+        Goal.objects
+        .filter(
+            status=Goal.Status.ACTIVE,
+            schedule__reminder_enabled=True,
+            schedule__reminder_time=now,
+        )
+        .select_related(
+            "user",
+            "schedule",
+        )
+    )

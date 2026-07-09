@@ -74,3 +74,29 @@ def get_active_conversation(*, user, channel):
         .order_by("-created_at")
         .first()
     )
+    
+from datetime import timedelta
+
+from django.utils import timezone
+
+
+def has_recent_user_activity(
+    *,
+    user,
+    minutes: int = 30,
+) -> bool:
+    """
+    Returns True if the user has sent any message within
+    the last `minutes`.
+
+    Used by reminder system to avoid sending reminders
+    while the user is actively engaged.
+    """
+
+    cutoff = timezone.now() - timedelta(minutes=minutes)
+
+    return Message.objects.filter(
+        conversation__user=user,
+        sender=Message.Sender.USER,
+        created_at__gte=cutoff,
+    ).exists()    

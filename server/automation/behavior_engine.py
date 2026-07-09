@@ -1,48 +1,61 @@
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
 class BehaviorDecision:
-    type: str   # "reminder", "motivation", "warning"
+    type: str
     message: str
 
 
 class BehaviorEngine:
     """
-    Decides HOW to respond to user state.
+    Decides HOW to respond based on reminder context.
     """
 
     @staticmethod
-    def analyze(*, user, pending_checkins: List[dict]) -> BehaviorDecision:
-        count = len(pending_checkins)
+    def analyze(*, user, pending_checkins: dict) -> BehaviorDecision:
 
-        # Case 1: No pending work
+        goals = pending_checkins.get("goals", [])
+        count = pending_checkins.get("pending_count", 0)
+
         if count == 0:
             return BehaviorDecision(
                 type="none",
-                message=""
+                message="",
             )
 
-        # Case 2: Light reminder
+        # Single goal
         if count == 1:
+            goal = goals[0]
+
+            message = (
+                f"👋 Hi {user.first_name or user.username},\n\n"
+                f"Today's goal:\n"
+                f"🎯 {goal['goal']}\n"
+            )
+
+            if goal["description"]:
+                message += f"{goal['description']}\n\n"
+
+            message += "Let's complete it today 💪"
+
             return BehaviorDecision(
                 type="reminder",
-                message="You have 1 pending goal today. Let’s complete it."
+                message=message,
             )
 
-        # Case 3: Medium load
-        if count <= 3:
-            return BehaviorDecision(
-                type="motivation",
-                message=f"You have {count} pending goals. Let’s start with one small step."
-            )
+        # Multiple goals
+        goal_list = "\n".join(
+            f"• {goal['goal']}"
+            for goal in goals
+        )
 
-        # Case 4: Heavy backlog
         return BehaviorDecision(
-            type="warning",
+            type="motivation",
             message=(
-                f"You have {count} pending tasks. "
-                "Let’s focus on just ONE today to restart momentum."
-            )
+                f"👋 Hi {user.first_name or user.username},\n\n"
+                f"You still have {count} goals today:\n\n"
+                f"{goal_list}\n\n"
+                "Which one will you finish first? 🚀"
+            ),
         )
