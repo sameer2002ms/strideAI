@@ -1,411 +1,502 @@
-Foundation
-│
-├── Account ✅
-├── Goals ✅
-├── Conversations ✅
-│
-├───────────────────────────────
-│
-├── Agent Platform ⭐
-│      │
-│      ├── AI Layer
-│      ├── Provider Layer
-│      ├── Prompt Management
-│      ├── Structured Outputs
-│      ├── Memory
-│      └── Agent Engine
-│
-├───────────────────────────────
-│
-├── Accountability Agent
-│
-├───────────────────────────────
-│
-├── CheckIns
-├── Notifications
-├── Analytics
-│
-├───────────────────────────────
-│
-├── Telegram
-├── Voice
-├── WhatsApp
-├── Mobile
+# 🚀 StrideAI
 
+> Your AI Accountability Partner
 
+StrideAI is an AI-powered accountability platform that helps users stay consistent with their goals through intelligent conversations, personalized reminders, and multi-channel communication.
 
+Instead of being just another habit tracker, StrideAI actively follows up with users, understands their responses, tracks progress, and keeps them accountable using AI.
 
-The Roadmap I'd follow
-Phase 1 — Platform Foundation ✅
-Authentication
+---
 
-Goals
+# ✨ Features
 
-Conversations
+- 🤖 AI Accountability Coach
+- 🎯 Goal Management
+- 📅 Automated Daily Check-ins
+- ⏰ Smart Reminders
+- 💬 AI Conversations
+- 📲 Telegram Integration
+- 🔐 JWT Authentication
+- 🧠 Conversation Memory
+- ⚡ Celery Background Tasks
+- 🐳 Dockerized Deployment
+- ☁️ Azure Ready
 
-Done.
+---
 
-Phase 2 — Intelligence Platform 🚧
-Agent Engine
+# 🏗 Architecture
+
+```
+                +----------------------+
+                |      React UI        |
+                +----------+-----------+
+                           |
+                           |
+                    Django REST API
+                           |
+      +--------------------+--------------------+
+      |                    |                    |
+      |                    |                    |
+ Authentication      Goal Engine        Conversation Engine
+      |                    |                    |
+      |                    |                    |
+      +-----------+--------+--------------------+
+                  |
+             Accountability Engine
+                  |
+          +-------+--------+
+          |                |
+     Reminder Engine   AI Reasoning
+          |                |
+          +-------+--------+
+                  |
+         Notification Dispatcher
+                  |
+        +---------+----------+
+        |                    |
+    Telegram            Future Channels
+                     (WhatsApp, Voice)
+```
+
+---
+
+# 🛠 Tech Stack
+
+## Backend
+
+- Python
+- Django
+- Django REST Framework
+- PostgreSQL
+- Redis
+- Celery
+- Celery Beat
+- OpenAI
+- Docker
+
+## Frontend
+
+- React
+- Vite
+- TailwindCSS
+- Axios
+
+## AI
+
+- OpenAI
+- Custom Prompt Builder
+- Context Builder
+- Behavior Engine
+- Intent Detection
+
+## Infrastructure
+
+- Azure Container Apps
+- Azure Database for PostgreSQL
+- Azure Container Registry
+- Azure Storage
+- Azure Application Insights
+
+---
+
+# 📂 Project Structure
+
+```
+strideAI/
+│
+├── client/                 # React Frontend
+│
+├── server/
+│   ├── account/
+│   ├── ai/
+│   ├── automation/
+│   ├── channels/
+│   ├── checkins/
+│   ├── conversations/
+│   ├── goals/
+│   ├── memory/
+│   ├── notifications/
+│   ├── config/
+│   └── manage.py
+│
+├── docker-compose.yml
+├── Dockerfile
+└── README.md
+```
+
+---
+
+# 🧠 How StrideAI Works
+
+## 1. User Creates Goals
+
+Example:
+
+```
+Drink Water
+Daily
+Reminder: 8:00 PM
+```
 
 ↓
 
-Reasoning Service
+Stored in
 
-↓
+- Goal
+- GoalSchedule
 
-Provider Layer
+---
 
-↓
+## 2. Daily Check-in Generation
 
-Structured Outputs
-Phase 3 — First Agent ⭐
-Accountability Agent
+Every midnight Celery generates pending check-ins.
 
-Capabilities:
+```
+Goal
+    ↓
 
-Ask questions
-Understand answers
-Collect missing information
-Decide next step
-End conversation
-Phase 4 — Business Features
-CheckIns
+Today's CheckIn
 
-↓
+Status:
+Pending
+```
 
-Notifications
+---
 
-↓
+## 3. Smart Reminder
 
-Analytics
-Phase 5 — Channels
+Every minute Celery checks
+
+```
+Which reminder is due now?
+```
+
+If the reminder time matches,
+
+```
+Reminder Engine
+        ↓
+
+Behavior Engine
+        ↓
+
+Notification Dispatcher
+        ↓
+
 Telegram
+```
+
+---
+
+## 4. User Replies
+
+Example
+
+```
+"I completed it"
+
+"I'm done"
+
+"Finished today's goal"
+```
 
 ↓
 
-Voice
+Intent Detector
 
 ↓
 
-WhatsApp
+Updates Check-in
+
+```
+Pending
 
 ↓
 
-Web Chat
+Completed
+```
 
 ↓
 
-Mobile
-Phase 6 — More Agents
-Study Coach
+AI responds naturally.
 
-Career Coach
+---
 
-Fitness Coach
+# 🤖 AI Pipeline
 
-Interview Coach
+```
+User Message
+      │
+      ▼
+Intent Detection
+      │
+      ▼
+Behavior Engine
+      │
+      ▼
+Context Builder
+      │
+      ▼
+Prompt Builder
+      │
+      ▼
+OpenAI
+      │
+      ▼
+Structured Response
+```
 
-Habit Coach
+---
 
-All using the same platform.
+# 📱 Telegram Integration
 
-This is where StrideAI becomes special
+Users can link Telegram with one click.
 
-Most AI apps are built like this:
-
-Chat
-
-↓
-
-AI
-
-StrideAI will be:
-
-Platform
-
-↓
-
-Agent Engine
-
-↓
-
-Reasoning
-
-↓
-
-Business Services
+```
+Web App
 
 ↓
 
-Multiple Agents
+Generate Secure Token
 
 ↓
 
-Multiple Channels
+Open Telegram
 
-That's a much bigger vision.
+↓
 
-If I were your CTO, this would be our V1 milestone
+/start <token>
 
-I'd define Version 1 as:
+↓
 
-StrideAI V1 — AI Accountability Platform
+Telegram Linked
 
-User Features
+↓
 
-✅ User registration and authentication
-✅ Goal management
-✅ Conversation history
-🚧 AI Accountability Agent
-🚧 AI understands natural language responses
-🚧 Automatic check-in creation
-🚧 Daily accountability reminders
-🚧 Progress tracking and streaks
-🚧 Analytics dashboard
-🚧 Web interface for conversations
+Receive AI Reminders
+```
 
-Platform Capabilities
+---
 
-✅ Channel-agnostic conversation model
-🚧 Agent Engine
-🚧 AI reasoning layer
-🚧 Provider abstraction (OpenAI first, extensible to Anthropic/Gemini)
-🚧 Structured AI outputs
-🚧 Background job processing
-🚧 Clean service-oriented architecture
+# ⏰ Reminder Pipeline
 
+```
+Celery Beat
+      │
+      ▼
+Runs every minute
+      │
+      ▼
+Find Goals Due
+      │
+      ▼
+Group by User
+      │
+      ▼
+Build Reminder Payload
+      │
+      ▼
+Behavior Engine
+      │
+      ▼
+Notification Dispatcher
+      │
+      ▼
+Telegram
+```
 
+---
 
+# 🔐 Authentication
 
+Uses JWT Authentication.
 
-This is the first time StrideAI is actually alive.
+Endpoints
 
-Your pipeline is now working end-to-end:
+```
+POST /api/v1/auth/register/
 
-POST /conversations/1/messages/
-        │
-        ▼
-ConversationMessagesAPIView
-        │
-        ▼
-send_message()
-        │
-        ├── Save user message ✅
-        │
-        ├── AgentEngine ✅
-        │
-        ├── ContextBuilder ✅
-        │
-        ├── PromptBuilder ✅
-        │
-        ├── ReasoningService ✅
-        │
-        ├── OpenAIProvider ✅
-        │
-        ├── Receive AI response ✅
-        │
-        ├── Save assistant message ✅
-        │
-        ▼
-Return response ✅
+POST /api/v1/auth/login/
 
-This is no longer an architecture project—it's a working AI application.
+POST /api/v1/auth/logout/
 
-What we achieved today
+GET /api/v1/auth/me/
 
-Instead of just having isolated components, you now have a complete request lifecycle:
+GET /api/v1/auth/me/profile/
 
-✅ User creates a conversation.
-✅ User sends a message.
-✅ Message is stored.
-✅ AI receives full conversation context.
-✅ AI generates a response.
-✅ Assistant message is stored.
-✅ API returns both messages.
+PATCH /api/v1/auth/me/profile/
 
-That's the foundation every future feature will use.
+GET /api/v1/auth/me/preferences/
 
-What we should build next
+PATCH /api/v1/auth/me/preferences/
+```
 
-Now we stop touching the AI infrastructure unless we find a real need.
+---
 
-We'll build features.
+# 🎯 Goal APIs
 
-Phase 1 — Improve the conversation experience (next)
+```
+GET    /api/v1/goals/
 
-Right now the AI is generic.
+POST   /api/v1/goals/
 
-Let's make it StrideAI.
+GET    /api/v1/goals/{id}/
 
-We'll update the system prompt so it understands:
+PATCH  /api/v1/goals/{id}/
 
-Accountability
-Goals
-Long-term coaching
-Concise responses
-Motivation without being repetitive
+DELETE /api/v1/goals/{id}/
 
-This is mostly prompt work, not architecture.
+POST   /api/v1/goals/{id}/pause/
 
-Phase 2 — Memory extraction
+POST   /api/v1/goals/{id}/resume/
 
-After every assistant response:
+POST   /api/v1/goals/{id}/archive/
+```
 
-Conversation
-      ↓
-Memory Extractor
-      ↓
-PostgreSQL Memory
+---
 
-Example:
+# ✅ Check-in APIs
 
-User:
+```
+GET /api/v1/checkins/
 
-My interview is on August 15.
+POST /api/v1/checkins/
 
-Memory stores:
+GET /api/v1/checkins/{id}/
 
-{
-    "interview_date": "2026-08-15"
-}
+DELETE /api/v1/checkins/{id}/
 
-Next conversation:
+POST /api/v1/checkins/{id}/complete/
 
-How many days are left until my interview?
+POST /api/v1/checkins/{id}/miss/
 
-The AI already knows.
+POST /api/v1/checkins/{id}/skip/
+```
 
-Phase 3 — Goal awareness
+---
 
-Instead of generic responses:
+# 💬 Conversation APIs
 
-Help me stay consistent.
+```
+GET /api/v1/conversations/
 
-The AI will actually query the user's goals and respond based on them.
+POST /api/v1/conversations/
 
-Phase 4 — Accountability Agent
+GET /api/v1/conversations/{id}/
 
-This is where StrideAI becomes unique.
+DELETE /api/v1/conversations/{id}/
 
-Example:
+GET /api/v1/conversations/{id}/messages/
 
-StrideAI:
-Did you solve today's LeetCode problem?
+POST /api/v1/conversations/{id}/messages/
 
-User:
-Yes, Two Sum.
+POST /api/v1/conversations/{id}/end/
 
-StrideAI:
-Awesome! You're now on a 7-day streak.
+POST /api/v1/conversations/{id}/abandon/
+```
 
-This isn't just chat—it's product behavior.
+---
 
-Phase 5 — Telegram
+# 📲 Telegram APIs
 
-The Telegram bot will simply call the same send_message() service.
+```
+POST /api/v1/channels/telegram/link/
 
-No duplicate AI logic.
+POST /api/v1/channels/telegram/webhook/
 
-One thing I'd like to clean up before adding features
+GET  /api/v1/channels/telegram/status/
+```
 
-Right now send_message() creates an AgentEngine instance directly:
+---
 
-engine = AgentEngine()
+# 🐳 Running Locally
 
-This is acceptable for now, but later we can inject dependencies if needed. I would not change it today. It isn't causing any problems, and it doesn't block features.
+Clone the repository
 
+```bash
+git clone https://github.com/yourusername/strideAI.git
+```
 
+Install dependencies
 
+```bash
+docker compose up --build
+```
 
-PHASE 6 — CELERY FOUNDATION (NEXT STEP)
+Backend
 
-We will build:
+```
+http://localhost:8000
+```
 
-Step 1
-Celery setup
-Redis connection
-Django integration
-Step 2
-periodic tasks
-🧭 PHASE 7 — DAILY CHECK-IN ENGINE
+Frontend
 
-Automate:
+```
+http://localhost:5173
+```
 
-create today's check-ins
-for all active goals
-🧭 PHASE 8 — TELEGRAM BOT
+---
 
-Then:
+# 🔄 Background Services
 
-user receives message daily
-bot triggers AI engine
-🧭 PHASE 9 — PROACTIVE AI
+Run
 
-AI starts:
+- Django API
+- PostgreSQL
+- Redis
+- Celery Worker
+- Celery Beat
 
-asking questions
-pushing user
-reacting without prompt
-🧠 BIG REALIZATION
+```
+docker compose up
+```
 
-Right now your system is:
+---
 
-Chatbot + database
+# 🌍 Deployment
 
-After Celery:
+Recommended Azure Services
 
-Behavior system that runs itself
+- Azure Container Registry
+- Azure Container Apps
+- Azure Database for PostgreSQL
+- Azure Storage
+- Azure Application Insights
 
+Frontend
 
+- Vercel
 
-🔴 MUST HAVE (before real users)
-1. Telegram production hardening
+---
 
-Right now you need:
+# 🚀 Future Roadmap
 
-Webhook verification (secret token check)
-Retry handling for failed Telegram sends
-Logging for every incoming message
-Error fallback responses
-2. AI context quality upgrade (VERY IMPORTANT)
+- WhatsApp Integration
+- Voice Calling Agent
+- Mobile Application
+- AI Memory System
+- Streak Analytics
+- Weekly Reports
+- AI Coach Personas
+- Push Notifications
+- Calendar Integration
+- Email Notifications
+- Wearable Integrations
+- Team Accountability
+- Multi-Agent Architecture
 
-Currently AI works, but it is still basic.
+---
 
-You need:
+# 👨‍💻 Author
 
-Add into context:
-recent messages (you have this partially)
-user goals
-check-in status
-daily schedule
-memory facts (long-term)
+**Mohd Sameer**
 
-👉 Without this, AI = chat bot
-👉 With this, AI = accountability agent
+Application Developer @ IBM
 
-3. Idempotency (critical for Telegram)
+Backend • AI • Django • Azure • React
 
-Telegram can resend webhooks.
+---
 
-You need:
+# 📄 License
 
-message_id tracking
-prevent duplicate processing
-4. Conversation lifecycle rules
-
-Right now conversations are:
-
-always active forever
-
-You need rules like:
-
-inactivity timeout (e.g. 24h → new conversation)
-daily reset option (for check-ins)
-5. Failure handling (Celery + AI)
-
-You need:
-
-retry AI call if OpenAI fails
-fallback response ("I couldn’t process this")
-dead letter logging
+This project is licensed under the MIT License.
