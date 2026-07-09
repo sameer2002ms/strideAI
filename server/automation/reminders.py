@@ -1,30 +1,43 @@
 from datetime import date
 
-from checkins.selectors import get_pending_checkins_for_date
+from checkins.models import CheckIn
 
 
 class ReminderEngine:
     """
-    Builds reminder payloads for users.
+    Builds reminder payloads for the goals whose reminder
+    time is currently due.
     """
 
     @staticmethod
-    def get_pending_checkins(*, user):
-        return get_pending_checkins_for_date(
-            user=user,
-            date_=date.today(),
+    def build_payload(*, user, goals):
+
+        today = date.today()
+
+        checkins = (
+            CheckIn.objects
+            .filter(
+                goal__in=goals,
+                date=today,
+                status=CheckIn.Status.PENDING,
+            )
+            .select_related("goal")
         )
 
-    @staticmethod
-    def build_payload(*, user):
-        checkins = ReminderEngine.get_pending_checkins(
-            user=user,
-        )
+        reminder_goals = []
 
-        return [
-            {
-                "checkin_id": checkin.id,
-                "goal": checkin.goal.title,
-            }
-            for checkin in checkins
-        ]
+        for checkin in checkins:
+            reminder_goals.append(
+                {
+                    "checkin_id": checkin.id,
+                    "goal": checkin.goal.title,
+                    "description": checkin.goal.description,
+                    "status": checkin.status,
+                    "date": str(checkin.date),
+                }
+            )
+
+        return {
+            "pending_count": len(reminder_goals),
+            "goals": reminder_goals,
+        }

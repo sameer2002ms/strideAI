@@ -12,6 +12,8 @@ class GoalScheduleSerializer(serializers.ModelSerializer):
             "days_of_week",
             "day_of_month",
             "interval",
+            "reminder_enabled",
+            "reminder_time",
             "start_date",
             "end_date",
             "custom_rule",

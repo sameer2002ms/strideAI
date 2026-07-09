@@ -24,8 +24,8 @@ app.conf.beat_schedule = {
         "schedule": crontab(hour=0, minute=0),
     },
 
-    "daily-reminders": {
-        "task": "checkins.tasks_reminder.send_daily_reminders",
-        "schedule": crontab(minute="*/300"),  # TEMP TEST
+    "pending-reminders": {
+        "task": "automation.tasks.send_pending_reminders",
+        "schedule": crontab(minute="*"),
     },
 }

@@ -54,6 +54,8 @@ export default function Goals() {
   const [frequency, setFrequency] = useState("DAILY");
   const [daysOfWeek, setDaysOfWeek] = useState([]);
   const [startDate, setStartDate] = useState(todayISO());
+  const [reminderEnabled, setReminderEnabled] = useState(true);
+  const [reminderTime, setReminderTime] = useState("08:00");
 
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -92,6 +94,8 @@ export default function Goals() {
     setTitle("");
     setDescription("");
     setFrequency("DAILY");
+    setReminderEnabled(true);
+    setReminderTime("08:00");
     setDaysOfWeek([]);
     setStartDate(todayISO());
     setFormError("");
@@ -132,6 +136,8 @@ export default function Goals() {
           days_of_week: frequency === "WEEKLY" ? daysOfWeek : [],
           day_of_month: null,
           interval: 1,
+          reminder_enabled: reminderEnabled,
+          reminder_time: reminderEnabled ? `${reminderTime}:00` : null,
           start_date: startDate,
           end_date: null,
           custom_rule: {},
@@ -337,6 +343,42 @@ export default function Goals() {
                     className="w-full p-2.5 bg-[#18181B] border border-[#27272A] rounded-xl text-sm text-white
                                outline-none focus:border-[#FACC15]/50 transition-colors duration-200"
                   />
+                </div>
+                <div className="border border-[#27272A] rounded-xl p-4 bg-[#18181B]">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-white">
+                        Daily Reminder
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Get notified on Telegram to complete this goal.
+                      </p>
+                    </div>
+
+                    <input
+                      type="checkbox"
+                      checked={reminderEnabled}
+                      onChange={(e) => setReminderEnabled(e.target.checked)}
+                      className="h-4 w-4 accent-[#FACC15]"
+                    />
+                  </div>
+
+                  {reminderEnabled && (
+                    <div className="mt-4">
+                      <label className="block text-xs font-medium text-gray-400 mb-1.5">
+                        Reminder Time
+                      </label>
+
+                      <input
+                        type="time"
+                        value={reminderTime}
+                        onChange={(e) => setReminderTime(e.target.value)}
+                        className="w-full p-2.5 bg-[#111827] border border-[#27272A] rounded-xl
+                   text-sm text-white outline-none
+                   focus:border-[#FACC15]/50"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
